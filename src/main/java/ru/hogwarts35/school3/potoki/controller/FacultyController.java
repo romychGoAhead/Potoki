@@ -30,7 +30,7 @@ public class FacultyController {
         return facultyService.update(id, faculty);
     }
     @DeleteMapping("/{id}")
-    public Faculty remove (@PathVariable Long id) {
+    public Faculty remove (@PathVariable ("id")Long id) {
         return facultyService.remove(id);
     }
     @GetMapping
@@ -39,7 +39,7 @@ public class FacultyController {
     }
 
     @GetMapping("/filtered")
-    public Collection<Faculty> filtered (@RequestParam String color){
+    public Collection<Faculty> getByColor (@RequestParam String color){
         return  facultyService.getByColor(color);
     }
 

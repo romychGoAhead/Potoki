@@ -1,7 +1,6 @@
 package ru.hogwarts35.school3.potoki.controller;
 
 
-import org.assertj.core.api.ObjectAssert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +15,7 @@ import ru.hogwarts35.school3.potoki.model.Student;
 import ru.hogwarts35.school3.potoki.repository.FacultyRepository;
 import ru.hogwarts35.school3.potoki.repository.StudentRepository;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -107,12 +107,12 @@ public class FacultyControllerTest {
     @Test
     void filteredByColorOrName() {
         String color = "red";
-        createFaculty("math", color);
+        createFaculty("math", "red");
         createFaculty("geography", "blu");
 
 
-        ResponseEntity<Collection> response = template.getForEntity
-                ("/faculty/by-color-or-name?colorOrName" + color, Collection.class);
+        ResponseEntity<ArrayList> response = template.getForEntity
+                ("/faculty/by-color-or-name?colorOrName=" + color, ArrayList.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);     // пишем проверки статус 200
         assertThat(response.getBody()).isNotNull();
         assertThat(response.getBody().size()).isEqualTo(1);
@@ -132,8 +132,7 @@ public class FacultyControllerTest {
         assertThat(studentResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         Long studentId = studentResponse.getBody().getId();
 
-       response = template.
-               getForEntity("/faculty/by-student?studentId="+studentId, Faculty.class);
+       response = template.getForEntity("/faculty/by-student?studentId=" + studentId, Faculty.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isNotNull();
         assertThat(response.getBody()).isEqualTo(faculty);
@@ -149,6 +148,8 @@ public class FacultyControllerTest {
         return response;
 
     }
+
+
 
 
 }

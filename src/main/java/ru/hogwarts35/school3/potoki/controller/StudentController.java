@@ -43,6 +43,7 @@ public class StudentController {
     public Student remove (@PathVariable Long id) {
         return studentService.remove(id);
     }
+
     @GetMapping("/by-age")
     public Collection<Student> filtered (@RequestParam int min,@RequestParam int max) {  // фильтр по min, max
         return studentService.findAllByAgeBetween(min,max);
