@@ -39,7 +39,7 @@ public class FacultyController {
     }
 
     @GetMapping("/filtered")
-    public Collection<Faculty> getByColor (@RequestParam String color){
+    public Collection<Faculty> getByColor (@RequestParam ("color") String color){
         return  facultyService.getByColor(color);
     }
 

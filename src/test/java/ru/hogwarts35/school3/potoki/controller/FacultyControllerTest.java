@@ -1,156 +1,127 @@
 package ru.hogwarts35.school3.potoki.controller;
 
 
-import org.junit.jupiter.api.AfterEach;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-
-import ru.hogwarts35.school3.potoki.Application;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.hogwarts35.school3.potoki.model.Faculty;
 import ru.hogwarts35.school3.potoki.model.Student;
 import ru.hogwarts35.school3.potoki.repository.FacultyRepository;
 import ru.hogwarts35.school3.potoki.repository.StudentRepository;
+import ru.hogwarts35.school3.potoki.service.FacultyService;
+import ru.hogwarts35.school3.potoki.service.StudentService;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.Optional;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static java.util.Arrays.*;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(classes = Application.class,
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@WebMvcTest(FacultyController.class) // указываем контроллер который тестируем
 
 public class FacultyControllerTest {
+    @Autowired
+    MockMvc mockMvc;
 
-    @Autowired
-    TestRestTemplate template;   // теперь мы можем писать тест.
-    @Autowired
+    @Autowired                    // в методе create объект faculty преобразовываем в JSON
+    ObjectMapper objectMapper;
+
+    @MockBean
+    StudentRepository studentRepository;  // мокаем репозтории
+    @MockBean
     FacultyRepository facultyRepository;
-
-    @Autowired
-    StudentRepository studentRepository;
-
-    @AfterEach
-    void clearDB() {
-        studentRepository.deleteAll();
-        facultyRepository.deleteAll();
-    }
+    @SpyBean
+    FacultyService facultyService;   // компоненты которые не надо мокать
 
     @Test
-    void create() {
-        String name = "math";
-        String color = "blu";
+    void getById() throws Exception {
 
-        ResponseEntity<Faculty> response = createFaculty(name, color);
+        Faculty faculty = new Faculty(1L, "math", "red");
+        when(facultyRepository.findById(1L)).thenReturn(Optional.of(faculty)); // findById возвращает Optional
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);     // пишем проверки статус 200
-        assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getName()).isEqualTo("math");
-        assertThat(response.getBody().getColor()).isEqualTo("blu");
-    }
-
-    @Test
-    void getById() {
-        ResponseEntity<Faculty> response = createFaculty("math", "red");
-        Long facultyId = response.getBody().getId();
-
-        response = template.getForEntity("/faculty/" + facultyId, Faculty.class);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);     // пишем проверки статус 200
-        assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getColor()).isEqualTo("red");
-        assertThat(response.getBody().getName()).isEqualTo("math");
-    }
-
-    @Test
-    void update() {
-        ResponseEntity<Faculty> response = createFaculty("math", "blu");
-        Long facultyId = response.getBody().getId();
-
-
-        template.put("/faculty/" + facultyId, new Faculty(null, "math", "red"));
-        response = template.getForEntity("/faculty/" + facultyId, Faculty.class);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);     // пишем проверки статус 200
-        assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getColor()).isEqualTo("red");
-    }
-
-    @Test
-    void delete() {
-        ResponseEntity<Faculty> response = createFaculty("math", "blu");
-        Long facultyId = response.getBody().getId();
-
-
-        template.delete("/faculty/" + facultyId);
-        response = template.getForEntity("/faculty/" + facultyId, Faculty.class);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);     // пишем проверки статус 200
+        mockMvc.perform(MockMvcRequestBuilders.get("/faculty/1")                           // вызываем эндпоин
+                        .accept(MediaType.APPLICATION_JSON)                                                  // пишем тип данных которые принимает эндпоинт
+                        .contentType(MediaType.APPLICATION_JSON))                                           // и возвращает
+                .andExpect(status().isOk())                                                           // через andExpect делаем проверки, проверяем что статус 200
+                .andExpect(jsonPath("$.name").value("math"))                                  // проверить данные
+                .andExpect(jsonPath("$.color").value("red"));
 
     }
 
     @Test
-    void getAll() {
-        createFaculty("math", "red");
-        createFaculty("geography", "blu");
+    void create() throws Exception {
+        Faculty faculty = new Faculty(1L, "math", "red");
+        when(facultyRepository.save(ArgumentMatchers.any(Faculty.class))).thenReturn(faculty);
 
+        mockMvc.perform(MockMvcRequestBuilders.post("/faculty")                           // вызываем эндпоин
+                        .content(objectMapper.writeValueAsString(faculty))                                 // преобразовываем                                           // указываем тело
+                        .accept(MediaType.APPLICATION_JSON)                                                  // пишем тип данных которые принимает эндпоинт
+                        .contentType(MediaType.APPLICATION_JSON))                                           // и возвращает
+                .andExpect(status().isOk())                                                           // через andExpect делаем проверки, проверяем что статус 200
+                .andExpect(jsonPath("$.name").value("math"))                                  // проверить данные
+                .andExpect(jsonPath("$.color").value("red"));
 
-        ResponseEntity<Collection> response = template.getForEntity
-                ("/faculty/", Collection.class);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);     // пишем проверки статус 200
-        assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().size()).isEqualTo(2);
     }
 
     @Test
-    void filteredByColorOrName() {
-        String color = "red";
-        createFaculty("math", "red");
-        createFaculty("geography", "blu");
+    void update() throws Exception {
+        Faculty faculty = new Faculty(1L, "math", "red");
+        when(facultyRepository.findById(1L)).thenReturn(Optional.of(faculty));
+        when(facultyRepository.save(ArgumentMatchers.any(Faculty.class))).thenReturn(faculty);
 
+        mockMvc.perform(MockMvcRequestBuilders.put("/faculty/1")                           // вызываем эндпоин
+                        .content(objectMapper.writeValueAsString(faculty))                                 // преобразовываем                                           // указываем тело
+                        .accept(MediaType.APPLICATION_JSON)                                                  // пишем тип данных которые принимает эндпоинт
+                        .contentType(MediaType.APPLICATION_JSON))                                           // и возвращает
+                .andExpect(status().isOk())                                                           // через andExpect делаем проверки, проверяем что статус 200
+                .andExpect(jsonPath("$.name").value("math"))                                  // проверить данные
+                .andExpect(jsonPath("$.color").value("red"));
 
-        ResponseEntity<ArrayList> response = template.getForEntity
-                ("/faculty/by-color-or-name?colorOrName=" + color, ArrayList.class);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);     // пишем проверки статус 200
-        assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().size()).isEqualTo(1);
-        Map<String, String> next = (HashMap) response.getBody().iterator().next();
-        assertThat(next.get("color")).isEqualTo("red");
     }
 
     @Test
-    void byStudent() {
+    void delete() throws Exception {
+        Faculty faculty = new Faculty(1L, "math", "red");
+        when(facultyRepository.findById(1L)).thenReturn(Optional.of(faculty));
 
-        ResponseEntity<Faculty> response = createFaculty("math", "red");
-        Faculty faculty = response.getBody();
-        Student student = new Student(null, "alex", 18);
-        student.setFaculty(faculty);
-        ResponseEntity<Student> studentResponse =
-                template.postForEntity("/student", student, Student.class);
-        assertThat(studentResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        Long studentId = studentResponse.getBody().getId();
 
-       response = template.getForEntity("/faculty/by-student?studentId=" + studentId, Faculty.class);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody()).isEqualTo(faculty);
-    }
-
-    private ResponseEntity<Faculty> createFaculty(String name, String color) {
-        ResponseEntity<Faculty> response = template.postForEntity
-                ("/faculty",
-                        new Faculty(null, name, color),  // сделан запрос
-                        Faculty.class);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isNotNull();
-        return response;
+        mockMvc.perform(MockMvcRequestBuilders.delete("/faculty/1")                           // вызываем эндпоин
+                        .content(objectMapper.writeValueAsString(faculty))                                 // преобразовываем                                           // указываем тело
+                        .accept(MediaType.APPLICATION_JSON)                                                  // пишем тип данных которые принимает эндпоинт
+                        .contentType(MediaType.APPLICATION_JSON))                                           // и возвращает
+                .andExpect(status().isOk())                                                           // через andExpect делаем проверки, проверяем что статус 200
+                .andExpect(jsonPath("$.name").value("math"))                                  // проверить данные
+                .andExpect(jsonPath("$.color").value("red"));
 
     }
+    @Test
+    void filteredByColor() throws Exception {
+
+        when(facultyRepository.findAllByColor("red"))
+                .thenReturn(asList(
+                        new Faculty(1L, "math", "red"),
+                        new Faculty(2L, "fiz", "blu")
+                ));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/faculty/filtered?color=red")                           // вызываем эндпоин
+                        .accept(MediaType.APPLICATION_JSON)                                                  // пишем тип данных которые принимает эндпоинт
+                        .contentType(MediaType.APPLICATION_JSON))                                           // и возвращает
+                .andExpect(status().isOk())                                                           // через andExpect делаем проверки, проверяем что статус 200
 
 
+                .andExpect(jsonPath("$[0].color").value("red"));
 
 
+    }
 }
+
 
