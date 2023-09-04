@@ -1,8 +1,10 @@
 package ru.hogwarts35.school3.potoki.service;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import ru.hogwarts35.school3.potoki.dto.AvatarDto;
 import ru.hogwarts35.school3.potoki.model.Avatar;
 import ru.hogwarts35.school3.potoki.model.Student;
 import ru.hogwarts35.school3.potoki.repository.AvatarRepository;
@@ -12,6 +14,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.apache.coyote.http11.Constants.a;
 
 @Service
 
@@ -32,6 +38,15 @@ public class AvatarService {
     public Avatar getById(Long id){
         return avatarRepository.findById(id).orElseThrow();
     }
+
+    public List<AvatarDto> getPage(int pageNum){
+        PageRequest pageRequest = PageRequest.of(pageNum, 3);
+List<Avatar>avatars = avatarRepository.findAll(pageRequest).getContent();
+        return avatars.stream()
+                .map(AvatarDto::fromEntity)
+                .collect(Collectors.toList());
+    }
+
     // МЕТОД СОХРАНЕНИЯ
     public Long save(Long studentId, MultipartFile multipartFile) throws IOException {   // мультипарт это класс который отвечает за файлы в запросах
         Files.createDirectories(pathToAvatars);                                             // сохраним на диск
@@ -61,5 +76,7 @@ public class AvatarService {
         avatarRepository.save(avatar);// сохр. объект
         return avatar.getId();
     }
+
+
 
 }

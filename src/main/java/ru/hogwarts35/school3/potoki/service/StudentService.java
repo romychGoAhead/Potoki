@@ -1,10 +1,12 @@
 package ru.hogwarts35.school3.potoki.service;
+
 import org.springframework.stereotype.Service;
 import ru.hogwarts35.school3.potoki.exception.StudentNotFoundException;
 import ru.hogwarts35.school3.potoki.model.Student;
 import ru.hogwarts35.school3.potoki.repository.StudentRepository;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -33,6 +35,7 @@ public class StudentService {
         return studentRepository.findAllByAge(age);
 
     }   // фильтрация по возрасту
+
     public Collection<Student> findAllByAgeBetween(int min, int max) {
         return studentRepository.findAllByAgeBetween(min, max);
 
@@ -56,5 +59,16 @@ public class StudentService {
         return Student;
     }
 
+    public Long count() {
+        return studentRepository.countStudens();
+    }
+
+    public double average() {
+        return studentRepository.averageAge();
+    }
+
+    public List<Student> getLastStudent(int quantity) {
+        return studentRepository.findLastStudents(quantity);
+    }
 
 }
