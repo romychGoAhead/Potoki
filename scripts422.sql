@@ -10,7 +10,7 @@ create table people (
 id serial primary key,
 name varchar,
 age integer,
-rights boolean default false
+driver_license boolean default false
 )
 
 create table car (
@@ -21,21 +21,21 @@ price integer
 --people_id references people(id)
 )
 
-create table peopleAndcars
+create table people_cars
 (
-	car_id int foreign key references car (car_id),
-	people_id int foreign key references people (people_id),
-	primary key(car_id, people_id)
-)
+car_id int references car (id),
+people_id int references people (id),
+primary key(car_id, people_id)
+);
 
-insert into people(name, age, rights) values ('Игорь', 18, true);
-insert into people(name, age, rights) values ('Марина', 20, true);
-insert into people(name, age, rights) values ('Александр', 22, true);
+insert into people(id, name, age, driver_license) values (1,'Игорь', 18, true);
+insert into people(id, name, age, driver_license) values (2,'Марина', 20, true);
+insert into people(id, name, age, driver_license) values (3,'Александр', 22, true);
 
 
-insert into car(people_id, make, model, price ) values (1,'Тойота', 'ist', 500000);
-insert into car(people_id, make, model, price ) values (2,'Тойота', 'camry', 1500000);
-insert into car(people_id, make, model, price ) values (3,'Тойота', 'rush', 800000);
+insert into car(id, make, model, price ) values (1,'Тойота', 'ist', 500000);
+insert into car(id, make, model, price ) values (2,'Тойота', 'camry', 1500000);
+insert into car(id, make, model, price ) values (3,'Тойота', 'rush', 800000);
 
 
 insert into peopleAndcars(people_id, car_id) values (1, 1);
