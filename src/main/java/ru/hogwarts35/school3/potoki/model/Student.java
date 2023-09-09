@@ -1,6 +1,9 @@
 package ru.hogwarts35.school3.potoki.model;
 
-import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+
 import java.util.Objects;
 
 @Entity
@@ -14,12 +17,13 @@ public class Student {
 
     @ManyToOne  // много студентов один факультет
     @JoinColumn(name = "faculty_id")     // какая колонка будет отвечать за эту связь
-
+    @JsonIgnore
     private Faculty faculty;   // добавляем факультет
 
 
     public Student() { // конструктор без параметров
     }
+
     public Student(Long id, String name, Integer age) {
         this.id = id;
         this.name = name;
