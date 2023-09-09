@@ -1,5 +1,6 @@
 package ru.hogwarts35.school3.potoki.controller;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +10,7 @@ import ru.hogwarts35.school3.potoki.dto.AvatarDto;
 import ru.hogwarts35.school3.potoki.model.Avatar;
 import ru.hogwarts35.school3.potoki.service.AvatarService;
 
-import javax.servlet.http.HttpServletResponse;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
