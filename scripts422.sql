@@ -38,10 +38,10 @@ insert into car(id, make, model, price ) values (2,'Тойота', 'camry', 1500
 insert into car(id, make, model, price ) values (3,'Тойота', 'rush', 800000);
 
 
-insert into peopleAndcars(people_id, car_id) values (1, 1);
-insert into peopleAndcars(people_id, car_id) values (1, 2);
-insert into peopleAndcars(people_id, car_id) values (2, 2);
-insert into peopleAndcars(people_id, car_id) values (2, 3);
-insert into peopleAndcars(people_id, car_id) values (3, 1);
-insert into peopleAndcars(people_id, car_id) values (3, 2);
-insert into peopleAndcars(people_id, car_id) values (3, 3);
+insert into people_cars(people_id, car_id) values (1, 1);
+insert into people_cars(people_id, car_id) values (1, 2);
+insert into people_cars(people_id, car_id) values (2, 2);
+insert into people_cars(people_id, car_id) values (2, 3);
+insert into people_cars(people_id, car_id) values (3, 1);
+insert into people_cars(people_id, car_id) values (3, 2);
+insert into people_cars(people_id, car_id) values (3, 3);
