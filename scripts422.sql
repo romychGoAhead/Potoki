@@ -6,19 +6,21 @@
 --пользоваться одной машиной. У каждого человека есть имя, возраст и признак того,
 --что у него есть права (или их нет). У каждой машины есть марка, модель и стоимость.
 --Также не забудьте добавить таблицам первичные ключи и связать их.
+
 create table people (
 id serial primary key,
 name varchar,
 age integer,
-driver_license boolean default false
+driverlicense boolean default false
 )
+ALTER TABLE people RENAME COLUMN new_driverlicense TO driverlicense;
 
 create table car (
 id serial primary key,
 make varchar,
 model varchar,
 price integer
---people_id references people(id)
+
 )
 
 create table people_cars
@@ -28,9 +30,10 @@ people_id int references people (id),
 primary key(car_id, people_id)
 );
 
-insert into people(id, name, age, driver_license) values (1,'Игорь', 18, true);
-insert into people(id, name, age, driver_license) values (2,'Марина', 20, true);
-insert into people(id, name, age, driver_license) values (3,'Александр', 22, true);
+
+insert into people(name, age, driverlicense) values ('Игорь', 18, true);
+insert into people(name, age, driverlicense) values ('Марина', 20, true);
+insert into people(name, age, driverlicense) values ('Александр', 22, true);
 
 
 insert into car(id, make, model, price ) values (1,'Тойота', 'ist', 500000);
