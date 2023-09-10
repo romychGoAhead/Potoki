@@ -16,20 +16,10 @@ public class FacultyController {
         this.facultyService = facultyService;
     }
 
-    @GetMapping
-    public Collection<Faculty> getAll() {
-        return facultyService.getAll();
-    }
-    @GetMapping("/filtered")
-    public Collection<Faculty> getByColor (@RequestParam("color") String color){
-        return  facultyService.getByColor(color);
-    }
-
     @GetMapping("/{id}")
     public Faculty getById(@PathVariable("id") Long id) {
         return facultyService.getById(id);
     }
-
     @PostMapping
     public Faculty create(@RequestBody Faculty faculty) {          // @RequestBody-  тело запроса
         return facultyService.create(faculty);
@@ -39,15 +29,23 @@ public class FacultyController {
     public Faculty update(@PathVariable("id") Long id, @RequestBody Faculty faculty) {
         return facultyService.update(id, faculty);
     }
-
     @DeleteMapping("/{id}")
-    public Faculty remove (@PathVariable Long id) {
+    public Faculty remove (@PathVariable ("id")Long id) {
         return facultyService.remove(id);
     }
+    @GetMapping
+    public Collection<Faculty> getAll() {
+        return facultyService.getAll();
+    }
 
-    @GetMapping("/by-search-or-name")
-    public Collection<Faculty> getByColorOrName (@RequestParam String search){ // мы передаем параметр
-        return  facultyService.getByColorOrName(search,search); // эти параметры мы передаем в оба места и в имя и цвет, т.к парамет поиска у нас и мя и цвет
+    @GetMapping("/filtered")
+    public Collection<Faculty> getByColor (@RequestParam ("color") String color){
+        return  facultyService.getByColor(color);
+    }
+
+    @GetMapping("/by-color-or-name")
+    public Collection<Faculty> filteredByColorOrName (@RequestParam String colorOrName){ // мы передаем параметр
+        return  facultyService.getAllByNameOrColor(colorOrName,colorOrName); // эти параметры мы передаем в оба места и в имя и цвет, т.к парамет поиска у нас и мя и цвет
     }
 
     @GetMapping("/by-student")

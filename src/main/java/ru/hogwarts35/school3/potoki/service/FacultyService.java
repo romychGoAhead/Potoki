@@ -59,7 +59,7 @@ public class FacultyService {
 
     }
 
-    public Collection<Faculty> getByColorOrName(String color, String name) {
+    public Collection<Faculty> getAllByNameOrColor(String color, String name) {
         return facultyRepository.findAllByColorIgnoreCaseOrNameIgnoreCase(color, name);
     }
     public Faculty getByStudentId (Long studentId){
