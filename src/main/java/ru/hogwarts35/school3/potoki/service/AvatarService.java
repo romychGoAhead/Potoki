@@ -1,5 +1,7 @@
 package ru.hogwarts35.school3.potoki.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ import static org.apache.coyote.http11.Constants.a;
 @Service
 
 public class AvatarService {
+    private static final Logger logger= LoggerFactory.getLogger(AvatarService.class);
 
     private AvatarRepository avatarRepository; // инжектим(подключаем)
     private StudentRepository studentRepository;
@@ -36,10 +39,12 @@ public class AvatarService {
 
 
     public Avatar getById(Long id){
+        logger.info("invoked method getById");
         return avatarRepository.findById(id).orElseThrow();
     }
 
     public List<AvatarDto> getPage(int pageNum){
+        logger.info("invoked method getPage");
         PageRequest pageRequest = PageRequest.of(pageNum, 3);
 List<Avatar>avatars = avatarRepository.findAll(pageRequest).getContent();
         return avatars.stream()
@@ -49,6 +54,7 @@ List<Avatar>avatars = avatarRepository.findAll(pageRequest).getContent();
 
     // МЕТОД СОХРАНЕНИЯ
     public Long save(Long studentId, MultipartFile multipartFile) throws IOException {   // мультипарт это класс который отвечает за файлы в запросах
+
         Files.createDirectories(pathToAvatars);                                             // сохраним на диск
         String originalFilename = multipartFile.getOriginalFilename();                 // расширение файла
         int dotIndex = originalFilename.lastIndexOf(".");                          // ищем с конца .
