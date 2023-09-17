@@ -46,7 +46,6 @@ public class AvatarController {
         }
     }
 
-
     @GetMapping(value = "/from-disk/{id}")
     public void getFromDisk(@PathVariable("id") Long id, HttpServletResponse response) {
         Avatar avatar = avatarService.getById(id);

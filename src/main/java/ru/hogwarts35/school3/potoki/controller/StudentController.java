@@ -63,9 +63,19 @@ public class StudentController {
     }
 
     @GetMapping("/last-five")
-    public List<Student> getLastFive(int quantity){
+    public List<Student> getLastFive(int quantity) {
         return studentService.getLastStudent(5);
     }
 
+    @GetMapping("/threads/async")
+    public void printAsync() {
+        studentService.printAsync();
+
+    }
+    @GetMapping("/threads/sync")
+    public void printSync() {
+        studentService.printSync();
+
+    }
 
 }

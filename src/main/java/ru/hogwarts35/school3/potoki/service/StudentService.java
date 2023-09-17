@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Service
 public class StudentService {
-   private static final Logger logger= LoggerFactory.getLogger(StudentService.class);  //объект с помощью которого мы будем писать loggi в консоли
+    private static final Logger logger = LoggerFactory.getLogger(StudentService.class);  //объект с помощью которого мы будем писать loggi в консоли
     private final StudentRepository studentRepository;
 
     public StudentService(StudentRepository studentRepository) {
@@ -81,6 +81,56 @@ public class StudentService {
     public List<Student> getLastStudent(int quantity) {
         logger.info("invoked method getLastStudent");
         return studentRepository.findLastStudents(quantity);
+    }
+    //4.6 potoki
+
+    public void printAsync() {
+
+        List<Student> all = studentRepository.findAll();
+        System.out.println(all.get(0));
+        System.out.println(all.get(1));
+
+        Thread t1 = new Thread(() -> {
+            System.out.println(all.get(2));
+            System.out.println(all.get(3));
+
+        });
+        Thread t2 = new Thread(() -> {
+            System.out.println(all.get(4));
+            System.out.println(all.get(5));
+
+        });
+
+        t1.start();
+        t2.start();
+
+    }
+
+    public void printSync() {
+
+        List<Student> all = studentRepository.findAll();
+        printSync(all.get(0));
+        printSync(all.get(1));
+
+        Thread t1 = new Thread(() -> {
+            printSync(all.get(2));
+            printSync(all.get(3));
+
+        });
+        Thread t2 = new Thread(() -> {
+            printSync(all.get(4));
+            printSync(all.get(5));
+
+        });
+
+        t1.start();
+        t2.start();
+
+    }
+
+    private synchronized void printSync(Student student) {
+        System.out.println(student);
+
     }
 
 }
