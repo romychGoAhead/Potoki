@@ -1,8 +1,9 @@
 package ru.hogwarts35.school3.potoki.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 
-import javax.persistence.*;
+
 import java.util.List;
 import java.util.Objects;
 @Entity
@@ -13,7 +14,7 @@ public class Faculty {
     private String name;
     private String color;
 
-    @OneToMany (mappedBy = "faculty") //  один факультет много студентов и по какому полю связаны
+    @OneToMany(mappedBy = "faculty") //  один факультет много студентов и по какому полю связаны
     @JsonIgnore                  // но лучше классы DTO
     List<Student> student;
     public Faculty() {
