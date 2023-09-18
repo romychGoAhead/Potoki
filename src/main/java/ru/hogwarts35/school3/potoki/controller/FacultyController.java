@@ -1,7 +1,9 @@
 package ru.hogwarts35.school3.potoki.controller;
 
 import org.springframework.web.bind.annotation.*;
+import ru.hogwarts35.school3.potoki.exception.StudentNotFoundException;
 import ru.hogwarts35.school3.potoki.model.Faculty;
+import ru.hogwarts35.school3.potoki.model.Student;
 import ru.hogwarts35.school3.potoki.service.FacultyService;
 
 import java.util.Collection;
@@ -52,4 +54,11 @@ public class FacultyController {
     public Faculty getByStudent(@RequestParam Long studentId){ // передаем студента
         return  facultyService.getByStudentId(studentId);
     }
+
+    @GetMapping("/stream/longest-name/")
+    public String getLongestName(){
+        return facultyService.getLongestName();
+    }
 }
+
+

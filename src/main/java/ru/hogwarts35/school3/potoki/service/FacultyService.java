@@ -9,11 +9,12 @@ import ru.hogwarts35.school3.potoki.repository.FacultyRepository;
 
 
 import java.util.Collection;
+import java.util.Comparator;
 
 
 @Service
 public class FacultyService {
-    private static final Logger logger= LoggerFactory.getLogger(FacultyService.class);
+    private static final Logger logger = LoggerFactory.getLogger(FacultyService.class);
 
     private final FacultyRepository facultyRepository;
 
@@ -23,7 +24,7 @@ public class FacultyService {
 
     public Faculty getById(Long id) {
         logger.info("invoked method getById");
-        logger.debug("id = "+id);                     // при отладке будет виден id
+        logger.debug("id = " + id);                     // при отладке будет виден id
         return facultyRepository.findById(id).orElseThrow(FacultyNotFoundException::new);
     }
 
@@ -71,8 +72,19 @@ public class FacultyService {
         logger.info("invoked method getAllByNameOrColor");
         return facultyRepository.findAllByColorIgnoreCaseOrNameIgnoreCase(color, name);
     }
-    public Faculty getByStudentId (Long studentId){
+
+    public Faculty getByStudentId(Long studentId) {
         logger.info("invoked method getByStudentId");
-        return facultyRepository.findByStudent_id(studentId).orElseThrow(FacultyNotFoundException::new);
+        return facultyRepository.findByStudent_id(studentId)
+                .orElseThrow(FacultyNotFoundException::new);
     }
+
+    public String getLongestName() {
+       return facultyRepository.findAll().stream()
+                .map(Faculty::getName)
+                .max(Comparator.comparingInt(String::length))
+                .orElseThrow(FacultyNotFoundException::new);
+
+    }
+
 }

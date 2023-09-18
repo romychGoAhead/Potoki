@@ -10,6 +10,7 @@ import ru.hogwarts35.school3.potoki.repository.StudentRepository;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -132,5 +133,19 @@ public class StudentService {
         System.out.println(student);
 
     }
+    public List<String> getAllStartsWithA (){
+        return studentRepository.findAll().stream()
+                .map(Student::getName)
+                .filter(s -> s.startsWith("A"))         // отфильтровали по символу
+                .sorted()
+                .collect(Collectors.toList());     // собираем в список
+    }
+public double getAverageAge(){
+        return studentRepository.findAll().stream()
+                .mapToInt(Student::getAge)             // преобразовываем
+                .average()
+                .orElseThrow(StudentNotFoundException::new);
+}
+
 
 }
