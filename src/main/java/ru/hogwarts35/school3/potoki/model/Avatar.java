@@ -1,6 +1,8 @@
 package ru.hogwarts35.school3.potoki.model;
 
-import javax.persistence.*;
+
+import jakarta.persistence.*;
+
 import java.util.Arrays;
 import java.util.Objects;
 
